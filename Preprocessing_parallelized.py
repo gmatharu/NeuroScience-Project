@@ -31,7 +31,7 @@ def process(file):
 
     # we move 2 seconds in time if the round down stimulus onset is even, if its odd, we move 3 sec ahead
     # then we divide by 2 to find the image number, currently we assume first image at 2 sec
-    fMRI_image_indexes = [int((x + 3) / 2) if x % 2 == 0 else int((x + 3) / 2) for x in stimulus_onsets_int]
+    fMRI_image_indexes = [int((x + 2) / 2) if x % 2 == 0 else int((x + 3) / 2) for x in stimulus_onsets_int]
 
     for index, fMRI_image_index in enumerate(fMRI_image_indexes):
         output_df.iloc[index, 0] = eeg['data_noGA'][:43, stimulus_onsets[index]:stimulus_onsets[index] + 1000]
