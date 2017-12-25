@@ -40,9 +40,8 @@ def process(file):
     # before 1s than current time and next image. if its even we take current image and one before then we divide
     # by 2 to find the image number,first image is completely acquired at 2 sec(all 32 slices)
     # Carefull to find the indexes as we need to subtract 1 to find 5th image, index should be 4 as indexing starts from 0.
-    fMRI_image_indexes = [(int((x - 2) / 2) - 1, int(x / 2) - 1) if x % 2 == 0 else (int((x - 1) / 2), int((x + 1) / 2))
-                          for
-                          x in stimulus_onsets_int]
+    fMRI_image_indexes = [(int((x - 2) / 2) - 1, int(x / 2) - 1) if x % 2 == 0 else (int((x - 1) / 2) - 1, int((x + 1) / 2) - 1) for
+        x in stimulus_onsets_int]
 
     for index, fMRI_image_index in enumerate(fMRI_image_indexes):
         # print(index, fMRI_image_index)
