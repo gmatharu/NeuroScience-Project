@@ -3,7 +3,7 @@ import scipy.io
 from nilearn import image
 import numpy as np
 import os
-
+import math
 
 def main():
     #Data Dir
@@ -21,7 +21,10 @@ def main():
     # For each subject each task each run we find stimulus onsets and then corresponding EEG and fMRI data
     for file in behav_files:
         stimulus = pd.read_csv(file,delim_whitespace=True)
-        stimulus_onsets_int = (stimulus['TrialOnset']).astype(int)
+        srt = [.200 if math.isnan(x) else x for x in stimulus['RT']]
+        # We add the stimulus run time(SRT) to TrialOnset since the HRF will start after SRT.
+        # Also add the +5 for HRF peak
+        stimulus_onsets_int = [int(round(x)) + 5 for x in (stimulus['TrialOnset'] + srt)]
         stimulus_onsets = (stimulus['TrialOnset'] * 1000).astype(int)
 
         fsplits = file.split('/')
@@ -33,14 +36,16 @@ def main():
         output_file = data_dir+fsplits[0]+'_'+fsplits[2]+'_df.pkl'
         eeg = scipy.io.loadmat(eeg_file)
 
-        # we move 2 seconds in time if the round down stimulus onset is even, if its odd, we move 3 sec ahead
+        # we take average of 2 nifti images,if stimulus_onsets_int(after adding HRF 5 sec) is odd we take image before 1s than current time and next image
+        # if its even we take current image and one before
         # then we divide by 2 to find the image number, currently we assume first image at 2 sec
-        fMRI_image_indexes = [int((x + 2) / 2) if x % 2 == 0 else int((x + 3) / 2) for x in stimulus_onsets_int]
+        fMRI_image_indexes = [(int((x - 2) / 2), int(x / 2)) if x % 2 == 0 else (int((x - 1) / 2), int((x + 1) / 2)) for
+                              x in stimulus_onsets_int]
 
         for index, fMRI_image_index in enumerate(fMRI_image_indexes):
             print(index, fMRI_image_index)
             output_df.iloc[index, 0] = eeg['data_noGA'][:43, stimulus_onsets[index]:stimulus_onsets[index] + 1000]
-            output_df.iloc[index, 1] = image.index_img(fmri_file,fMRI_image_index)
+            output_df.iloc[index, 1] = image.mean_img([image.index_img(fmri_file,fMRI_image_index[0]),image.index_img(fmri_file,fMRI_image_index[1])])
         #Save the df
         output_df.to_pickle(output_file )
 
