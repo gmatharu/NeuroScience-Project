@@ -39,4 +39,8 @@ for file in behav_files:
             baseline_means = np.swapaxes(np.tile(baseline_means, (1000, 1)), 0, 1)
             normalized_signal = power.data[channel, :, 500:] / baseline_means
             output[channel,:,:]=np.flipud(normalized_signal)
-        scipy.io.savemat(outfile,{'normalized_channels':output})
+        outnorm = np.zeros((43, 74, 20))
+        for freq in range(74):
+            for index, time in enumerate(range(0, 950, 50)):
+                outnorm[:, freq, index] = output[:, freq, time:time + 50].mean(axis=1)
+        scipy.io.savemat(outfile,{'normalized_channels':outnorm})
