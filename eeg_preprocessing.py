@@ -41,6 +41,6 @@ for file in behav_files:
             output[channel,:,:]=np.flipud(normalized_signal)
         outnorm = np.zeros((43, 74, 20))
         for freq in range(74):
-            for index, time in enumerate(range(0, 950, 50)):
+            for index, time in enumerate(range(0, 951, 50)):
                 outnorm[:, freq, index] = output[:, freq, time:time + 50].mean(axis=1)
         scipy.io.savemat(outfile,{'normalized_channels':outnorm})
