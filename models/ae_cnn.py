@@ -23,7 +23,7 @@ aes = {}
 for clas in classes:
     msk = y == clas
     x_train = X[msk]
-    # x_train = x_train.astype('float32') / x_train.max().astype('float32')
+    x_train = x_train.astype('float32') / x_train.max().astype('float32')
     y_train = y[msk]
 
     from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D
@@ -63,7 +63,6 @@ for ex in range(X.shape[0]):
     e[0, :, :, :] = X[ex]
     X_train[ex] = encoder.predict(e)
 import tflearn
-from tflearn.data_utils import shuffle, to_categorical
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
