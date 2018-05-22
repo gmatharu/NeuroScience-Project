@@ -115,8 +115,6 @@ for traincv, testcv in cv:
 from sklearn.metrics import confusion_matrix
 
 print(confusion_matrix(y.argmax(axis=1), ypred_all.argmax(axis=1)))
-print(
-    "This run 4conv layers,relu,adagrad optm no regul batch nor,10 epochs, lr chnaged from 0.0005 to 0.01 and filters updated 128")
 from sklearn.metrics import f1_score
 
 print('F1 score micro:')
